@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Kamp</title>
+    <title>Vynchronize</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +41,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand js-scroll-trigger" href="#Home"><img src="img/logo.png" alt="Kamp logo" height="40" width="40"> Kamp</a>
+            <a class="navbar-brand js-scroll-trigger" href="#Home"><img src="img/logo.png" alt="Vynchronize logo" height="40" width="40"> Vynchronize</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -61,7 +61,16 @@
                     <li class="nav-item">
                         <a id="contact-nav" class="nav-link js-scroll-trigger hide" href="#contact">Contact</a>
                     </li>
-                  
+                    <li class="nav-item">
+                        <a target="_blank" rel="noopener noreferrer" class="nav-link js-scroll-trigger" href="https://www.facebook.com/vynchronize">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a target="_blank" rel="noopener noreferrer" class="nav-link js-scroll-trigger" href="https://github.com/kyle8998/Vynchronize">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -130,7 +139,7 @@
 
                     <!-- INVITE MOVED TO MODAL -->
                     <!-- <p id="invite">Invite a friend! Send them the link: vynchronize.herokuapp.com/ROOMNUM</p> -->
-                    <!-- <h5><span id="hostlabel" class="label label-default"><i class="fas fa-user"></i> Current Host: Kyle </span></h5> -->
+                    <h2><span id="hostlabel" class="label label-default"><i class="fas fa-user"></i> Current Host: Kyle </span></h2>
 
                     <!----------------------------------- PLAYER AREA ----------------------------------->
 
@@ -157,7 +166,7 @@
                     <!----------------------------------- PLAYER AREA ----------------------------------->
                     <!-- <hr> -->
                     <div>
-                        <!-- <button id="playButton" onclick="playVideo(roomnum)" style="margin-top:.5rem" class="btn btn-primary"><i class="fa fa-play"></i> Play / <i class="fa fa-pause"></i> Pause</button> -->
+                        <button id="playButton" onclick="playVideo(roomnum)" style="margin-top:.5rem" class="btn btn-primary"><i class="fa fa-play"></i> Play / <i class="fa fa-pause"></i> Pause</button>
 
                         <button id="syncbutton" onclick="syncVideo(roomnum);syncAlert()" style="margin-top:.5rem" class="btn btn-primary"><i class="fa fa-sync"></i> Sync</button>
 
@@ -173,27 +182,41 @@
 
                     <div class="topbotmargins">
                         <input type="Video" style="max-width: 200px; margin-right: .5rem; margin-bottom: .5rem; float: left;" class="form-control" id="inputVideoId" placeholder="Video ID / URL">
-                        
+                        <button id="enqueueButton" onclick="enqueueVideoParse(roomnum)" class="btn btn-primary"><i class="fas fa-plus"></i> Add to Queue</button>
+                        <button id="emptyButton" onclick="emptyQueue(roomnum)" class="btn btn-primary"><i class="fas fa-trash"></i> Empty Queue</button>
                     </div>
                     <div>
                         <!-- <a class="ghost-button-full-color"><i class="far fa-times-circle"></i></a> -->
                         <button id="changeButton" onclick="changeVideoParse(roomnum)" class="btn btn-primary"><i class="fas fa-exchange-alt"></i> Change Video</button>
-                        
+                        <button id="previousButton" onclick="prevVideo(roomnum)" class="btn btn-primary"><i class="fas fa-step-backward"></i> Previous</button>
+                        <button id="nextButton" onclick="playNext(roomnum)" class="btn btn-primary"><i class="fas fa-step-forward"></i> Next</button>
 
                         <br/>
 
                     </div>
                     <!-- <input type="file" id="html5-input" /> -->
                     <!-- Playlist shit -->
-                   
-                    <!-- <div id="queue-arrows" class="arrows">
+                    <div id="visual-queue" class="vid-list-container">
+                        <ul class="vid-list" id="vidlist">
+                            <li class="vid-item">
+                                <!-- <div class="thumb">
+                                    <a onClick="removeAt(0)" class="ghost-button-full-color"><i class="far fa-times-circle"></i></a>
+                                    <img src="http://img.youtube.com/vi/eg6kNoJmzkY/0.jpg">
+                                </div>
+                                <div class="desc">
+                                    Jessica Hernandez & the Deltas - Dead Brains
+                                </div> -->
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="queue-arrows" class="arrows">
                         <div class="arrow-left">
                             <i class="fa fa-chevron-left fa-lg"></i>
                         </div>
                         <div class="arrow-right">
                             <i class="fa fa-chevron-right fa-lg"></i>
                         </div>
-                    </div> -->
+                    </div>
                     <br/>
 
                     <!-- HTML5 player input -->
@@ -201,6 +224,7 @@
                     <!-- <input type="Video" style="max-width: 200px; margin-right: .5rem; margin-bottom: .5rem; float: left;" class="form-control" id="inputVideoURL" placeholder="Direct URL to .mp4/.webm"> -->
 
                     <!-- <p style="display: none" id="html5-message" class="lead">Video File Upload Not Yet Supported</p> -->
+                    <p style="display: none" id="beta-message" class="lead">Queue is currently only supported by YouTube</p>
 
 
 
@@ -210,11 +234,18 @@
                 <div class="col-lg-5">
                     <!-- <div class="col-md-4"> -->
                     <!-- <div id="onlineArea" class="row"> -->
-                    <!-- <h5 class="right-header">Online Users</h5>
-                    <hr style="height:0pt; visibility:hidden;" /> -->
+                    <h5 class="right-header">Online Users</h5>
+                    <hr style="height:0pt; visibility:hidden;" />
 
                     <!-- <br/> -->
-                   
+                    <div class="col-md-13">
+                        <div class="well online-users noscrollbar">
+                            <ul class="list-group" id="users"></ul>
+                        </div>
+
+                        <!-- Trigger the modal with a button -->
+                        <button style="background-color: #007bff" type="button" class="nonmobile-hide btn btn-info btn-sm invite-button" data-toggle="modal" data-target="#inviteModal"><i style="width: 30px; height: 30px;" class="fas fa-user-plus"></i><br><h5>Invite</h5></button>
+                    </div>
                     <hr style="height:0pt; visibility:hidden;" />
                     <h5 style="color:gray;">Chatroom</h5>
 
@@ -272,11 +303,11 @@
             <!-- /.row -->
 
             <!-- Call to Action Well -->
-            <!-- <div class="card text-white bg-secondary my-4 text-center">
+            <div class="card text-white bg-secondary my-4 text-center">
                 <div class="card-body">
                     <p class="text-white m-0">*The synchronization may not be perfect! It's a work in progress, submit an issue on github if you wish to submit a bug report/suggestion.</p>
                 </div>
-            </div> -->
+            </div>
 
             <!-- Content Row -->
             <!-- <div class="row">
@@ -321,10 +352,43 @@
             <!-- /.row -->
 
             <!-- <hr style="height:20pt; visibility:hidden;" /> -->
-            
+            <section id="about" class="bg-light">
+                <hr style="height:100pt; visibility:hidden;" />
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <h2>About Vynchronize</h2>
+                            <p class="lead">Vynchronize is a video synchronization platform created for viewing parties with friends!</p>
+                            <p> To use Vynchronize just enter your name and a shared room number with friends. Then all you have to do is select your video client (YouTube by default), enter a video ID, and click "Change Video". All video playback should
+                                be synchronized to everyone in the room! </p>
+                            <p> There is one host per room that can control the video client directly with the native player controls. Everyone else can still use them but it will only affect them until they hit sync!</p>
+                            <p> Have fun watching videos with friends!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <hr style="height:20pt; visibility:hidden;" />
 
-           
+            <section id="contact" class="bg-light">
+                <hr style="height:100pt; visibility:hidden;" />
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto">
+                            <h2>Contact Me</h2>
+                            <p class="lead">Who Am I?</p>
+                            <p> I'm Kyle! A student and developer just trying build software for the everyday user! I developed Vynchronize because it was a problem that I needed to solve myself, and now I continue to build it for the those who enjoy using
+                                it! :)</p>
+                            <p> You can contact me directly at <a href="mailto:kylelim8998@gmail.com?Subject=Vynchronize">kylelim8998@gmail.com</a> if you have any questions, concerns, or just to say hi! If you want to submit a suggestion, please see the
+                                github issues page.</p>
+                            <p> Also I want to keep the website up and running with an ad-free experience because I hate ads too! I'm currently paying for servers and a domain, but they are expensive to a broke college kid. If you would like to donate click
+                                below! I appreciate the support!</p>
+                            <a href="https://www.paypal.me/kylelim"><button style="margin-top:.5rem" class="btn btn-primary"><i class="far fa-heart"></i> Donate</button></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <hr style="height:50pt; visibility:hidden;" />
 
         </div>
@@ -334,7 +398,7 @@
     <!-- Footer -->
     <footer id="footer" class="py-5 bg-dark footer">
         <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; Kamp 2022</p>
+            <p class="m-0 text-center text-white">Copyright &copy; Vynchronize 2018</p>
         </div>
         <!-- /.container -->
     </footer>
